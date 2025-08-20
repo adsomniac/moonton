@@ -17,6 +17,8 @@
     {{-- Styles css --}}
     <link rel="stylesheet" href="{{ mix('resources/css/app.css') }}">
 
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2.3.0/dist/flickity.min.css">
+
     <!-- Scripts -->
     @routes
     @viteReactRefresh

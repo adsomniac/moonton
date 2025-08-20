@@ -1,5 +1,6 @@
 @import "TextInput.css";
 @import "PrimaryButton.css";
+@import "Sidebar.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
