@@ -1,69 +1,25 @@
 import Authenticated from "@/Layouts/Authenticated/Index";
 import FeaturedMovie from "@/Components/FeaturedMovie";
 import MovieCard from "@/Components/MovieCard";
-import Flickity from "react-flickity-component";
-import "flickity/dist/flickity.min.css";
 import { Head } from "@inertiajs/react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export default function Dashboard() {
-    const featuredFlickityRef = useRef(null);
-    const browseFlickityRef = useRef(null);
-
-    const featuredFlickityOptions = {
-        cellAlign: "left",
-        contain: true,
-        groupCells: false,
-        wrapAround: false,
-        pageDots: false,
-        prevNextButtons: true,
-        draggable: true,
-        freeScroll: false,
-        percentPosition: false,
-        resize: true,
-        imagesLoaded: true,
-    };
-
-    const browseFlickityOptions = {
-        cellAlign: "left",
-        contain: true,
-        groupCells: false,
-        wrapAround: false,
-        pageDots: false,
-        prevNextButtons: true,
-        draggable: true,
-        freeScroll: false,
-        percentPosition: false,
-        resize: true,
-        imagesLoaded: true,
-    };
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            // Resize featured flickity
-            if (featuredFlickityRef.current && featuredFlickityRef.current.flickity) {
-                console.log('Featured Flickity instance:', featuredFlickityRef.current.flickity);
-                featuredFlickityRef.current.flickity.resize();
-                featuredFlickityRef.current.flickity.reloadCells();
-            }
-
-            // Resize browse flickity
-            if (browseFlickityRef.current && browseFlickityRef.current.flickity) {
-                console.log('Browse Flickity instance:', browseFlickityRef.current.flickity);
-                browseFlickityRef.current.flickity.resize();
-                browseFlickityRef.current.flickity.reloadCells();
-            }
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, []);
-
     const movieData = [
-        { id: 1, title: "The Batman in Love", genre: "Action • Horror", rating: "4.5/5.0" },
-        { id: 2, title: "Spider-Man Returns", genre: "Action • Adventure", rating: "4.2/5.0" },
-        { id: 3, title: "Wonder Woman", genre: "Action • Fantasy", rating: "4.8/5.0" },
-        { id: 4, title: "Black Panther", genre: "Action • Sci-Fi", rating: "4.6/5.0" },
-        { id: 5, title: "Doctor Strange", genre: "Action • Fantasy", rating: "4.3/5.0" },
+        { id: 1, title: "The Batman in Love", genre: "Action • Horror", rating: "4.5/5.0", slug: "the-batman-in-love" },
+        { id: 2, title: "Spider-Man Returns", genre: "Action • Adventure", rating: "4.2/5.0", slug: "spider-man-returns" },
+        { id: 3, title: "Wonder Woman", genre: "Action • Fantasy", rating: "4.8/5.0", slug: "wonder-woman" },
+        { id: 4, title: "Black Panther", genre: "Action • Sci-Fi", rating: "4.6/5.0", slug: "black-panther" },
+        { id: 5, title: "Doctor Strange", genre: "Action • Fantasy", rating: "4.3/5.0", slug: "doctor-strange" },
     ];
 
     return (
@@ -71,136 +27,184 @@ export default function Dashboard() {
             <Head>
                 <title>Dashboard</title>
                 <style>{`
-                    /* Base styles */
-                    .movie-section {
+                    /* Custom Swiper Styles */
+                    .featured-swiper {
                         width: 100%;
+                        padding: 20px 0;
                         overflow: visible;
+                    }
+                    
+                    .featured-swiper .swiper-slide {
+                        width: 520px !important;
+                        height: 340px;
+                        flex-shrink: 0;
+                    }
+                    
+                    .browse-swiper {
+                        width: 100%;
+                        padding: 20px 0;
+                        overflow: visible;
+                    }
+                    
+                    .browse-swiper .swiper-slide {
+                        width: 250px !important;
+                        height: 340px;
+                        flex-shrink: 0;
+                    }
+                    
+                    /* Navigation buttons */
+                    .swiper-button-next,
+                    .swiper-button-prev {
+                        background: rgba(0, 0, 0, 0.5) !important;
+                        width: 50px !important;
+                        height: 50px !important;
+                        border-radius: 50% !important;
+                        color: #fff !important;
+                        margin-top: -25px !important;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                        backdrop-filter: blur(10px);
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .swiper-button-next:after,
+                    .swiper-button-prev:after {
+                        font-size: 18px !important;
+                        font-weight: bold !important;
+                    }
+                    
+                    .swiper-button-next:hover,
+                    .swiper-button-prev:hover {
+                        background: rgba(0, 0, 0, 0.8) !important;
+                        transform: scale(1.1);
+                    }
+                    
+                    .swiper-button-prev {
+                        left: 10px !important;
+                    }
+                    
+                    .swiper-button-next {
+                        right: 10px !important;
+                    }
+                    
+                    /* Hide buttons when not hovering over swiper */
+                    .featured-swiper .swiper-button-next,
+                    .featured-swiper .swiper-button-prev,
+                    .browse-swiper .swiper-button-next,
+                    .browse-swiper .swiper-button-prev {
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+                    
+                    .featured-swiper:hover .swiper-button-next,
+                    .featured-swiper:hover .swiper-button-prev,
+                    .browse-swiper:hover .swiper-button-next,
+                    .browse-swiper:hover .swiper-button-prev {
+                        opacity: 1;
+                    }
+                    
+                    /* Pagination */
+                    .swiper-pagination {
+                        bottom: 10px !important;
+                        left: 50% !important;
+                        transform: translateX(-50%) !important;
+                        width: auto !important;
+                    }
+                    
+                    .swiper-pagination-bullet {
+                        background: rgba(255,255,255,0.4) !important;
+                        opacity: 1 !important;
+                        width: 12px !important;
+                        height: 12px !important;
+                        margin: 0 6px !important;
+                        transition: all 0.3s ease !important;
+                    }
+                    
+                    .swiper-pagination-bullet-active {
+                        background: #fff !important;
+                        transform: scale(1.2) !important;
+                    }
+                    
+                    /* Container spacing */
+                    .movie-section {
                         padding: 20px 0;
                     }
-
-                    /* Featured Movies Flickity */
-                    .featured-flickity {
-                        width: 100% !important;
-                        min-height: 400px !important;
-                        overflow: visible !important;
-                        margin-bottom: 40px;
-                    }
                     
-                    .featured-flickity .flickity-enabled {
-                        position: relative;
-                        width: 100%;
-                    }
-                    
-                    .featured-flickity .flickity-viewport {
-                        overflow: hidden;
-                        position: relative;
-                        width: 100%;
-                        height: 380px;
-                    }
-                    
-                    .featured-flickity .flickity-slider {
-                        position: relative;
-                        width: 100%;
-                        height: 100%;
-                        display: flex !important;
-                        align-items: flex-start !important;
-                    }
-                    
-                    .featured-flickity .flickity-cell {
-                        width: 520px !important;
-                        height: 340px !important;
-                        margin-right: 30px !important;
-                        flex-shrink: 0 !important;
-                        position: relative !important;
-                        border: 1px solid #00ff00; /* Debug border */
-                    }
-
-                    /* Browse Movies Flickity */
-                    .browse-flickity {
-                        width: 100% !important;
-                        min-height: 400px !important;
-                        overflow: visible !important;
-                    }
-                    
-                    .browse-flickity .flickity-enabled {
-                        position: relative;
-                        width: 100%;
-                    }
-                    
-                    .browse-flickity .flickity-viewport {
-                        overflow: hidden;
-                        position: relative;
-                        width: 100%;
-                        height: 380px;
-                    }
-                    
-                    .browse-flickity .flickity-slider {
-                        position: relative;
-                        width: 100%;
-                        height: 100%;
-                        display: flex !important;
-                        align-items: flex-start !important;
-                    }
-                    
-                    .browse-flickity .flickity-cell {
-                        width: 250px !important;
-                        height: 340px !important;
-                        margin-right: 30px !important;
-                        flex-shrink: 0 !important;
-                        position: relative !important;
-                        border: 1px solid #ff0000; /* Debug border */
-                    }
-
-                    /* Common button styles */
-                    .flickity-button {
-                        background: rgba(255,255,255,0.8) !important;
-                        border: none !important;
-                        color: #333 !important;
-                    }
-
-                    .flickity-button:hover {
-                        background: rgba(255,255,255,1) !important;
-                    }
-
-                    .flickity-enabled:focus {
-                        outline: none;
+                    .section-title {
+                        font-weight: 600;
+                        font-size: 22px;
+                        color: #000;
+                        margin-bottom: 20px;
+                        padding-left: 20px;
                     }
                 `}</style>
             </Head>
+
             <div className="movie-section">
                 {/* Featured Movies Section */}
-                <div className="font-semibold text-[22px] text-black mb-4">Featured Movies</div>
-                <div style={{ width: '100%', minHeight: '400px', marginBottom: '40px' }}>
-                    <Flickity
-                        className="featured-flickity"
-                        elementType="div"
-                        options={featuredFlickityOptions}
-                        disableImagesLoaded={false}
-                        flickityRef={c => featuredFlickityRef.current = c}
-                        reloadOnUpdate={true}
-                    >
-                        {movieData.map((movie) => (
-                            <FeaturedMovie key={`featured-${movie.id}`} movie={movie} />
-                        ))}
-                    </Flickity>
-                </div>
+                <div className="section-title">Featured Movies</div>
+                <Swiper
+                    modules={[Navigation, Pagination]}
+                    className="featured-swiper"
+                    spaceBetween={30}
+                    slidesPerView="auto"
+                    navigation={true}
+                    pagination={{
+                        clickable: true,
+                        dynamicBullets: true,
+                    }}
+                    grabCursor={true}
+                    breakpoints={{
+                        320: {
+                            slidesPerView: 1,
+                            spaceBetween: 20,
+                        },
+                        768: {
+                            slidesPerView: 'auto',
+                            spaceBetween: 30,
+                        },
+                    }}
+                >
+                    {movieData.map((movie) => (
+                        <SwiperSlide key={`featured-${movie.id}`}>
+                            <FeaturedMovie movie={movie} />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
 
                 {/* Browse Movies Section */}
-                <div className="font-semibold text-[22px] text-black mb-4">Browse</div>
-                <div style={{ width: '100%', minHeight: '400px' }}>
-                    <Flickity
-                        className="browse-flickity"
-                        elementType="div"
-                        options={browseFlickityOptions}
-                        disableImagesLoaded={false}
-                        flickityRef={c => browseFlickityRef.current = c}
-                        reloadOnUpdate={true}
-                    >
-                        {movieData.map((movie) => (
-                            <MovieCard key={`browse-${movie.id}`} movie={movie} />
-                        ))}
-                    </Flickity>
-                </div>
+                <div className="section-title" style={{ marginTop: '60px' }}>Browse</div>
+                <Swiper
+                    modules={[Navigation, Pagination]}
+                    className="browse-swiper"
+                    spaceBetween={30}
+                    slidesPerView="auto"
+                    navigation={true}
+                    pagination={{
+                        clickable: true,
+                        dynamicBullets: true,
+                    }}
+                    grabCursor={true}
+                    breakpoints={{
+                        320: {
+                            slidesPerView: 1,
+                            spaceBetween: 20,
+                        },
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        768: {
+                            slidesPerView: 'auto',
+                            spaceBetween: 30,
+                        },
+                    }}
+                >
+                    {movieData.map((movie) => (
+                        <SwiperSlide key={`browse-${movie.id}`}>
+                            <MovieCard movie={movie} />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
         </Authenticated>
     );

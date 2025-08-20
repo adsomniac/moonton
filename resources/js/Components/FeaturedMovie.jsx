@@ -1,5 +1,6 @@
-export default function FeaturedMovie({ movie }) {
+import { Link } from "@inertiajs/react";
 
+export default function FeaturedMovie({ movie }) {
     return (
         <div
             className="relative overflow-hidden group cursor-pointer"
@@ -60,16 +61,34 @@ export default function FeaturedMovie({ movie }) {
 
                 {/* Play Button */}
                 <div className="translate-x-[100px] group-hover:translate-x-0 transition ease-in-out duration-500">
-                    <img
-                        src="/icons/ic_play.svg"
-                        width="50"
-                        alt="Play"
-                        className="hover:scale-110 transition-transform"
-                        onError={(e) => {
-                            // Fallback jika icon tidak ada
-                            e.target.style.display = 'none';
-                        }}
-                    />
+                    {/* Pastikan movie.slug tersedia sebelum membuat Link */}
+                    {movie.slug ? (
+                        <Link href={route('prototype.movie.show', movie.slug)} className="inline-block">
+                            <img
+                                src="/icons/ic_play.svg"
+                                width="50"
+                                alt="Play"
+                                className="hover:scale-110 transition-transform"
+                                onError={(e) => {
+                                    // Fallback jika icon tidak ada
+                                    e.target.style.display = 'none';
+                                }}
+                            />
+                        </Link>
+                    ) : (
+                        // Fallback jika slug tidak tersedia
+                        <div className="inline-block opacity-50 cursor-not-allowed">
+                            <img
+                                src="/icons/ic_play.svg"
+                                width="50"
+                                alt="Play (Unavailable)"
+                                className="grayscale"
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
